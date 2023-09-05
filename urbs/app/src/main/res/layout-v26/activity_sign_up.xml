@@ -36,7 +36,7 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="24dp"
 
-                android:hint="Nome"
+                android:hint="@string/nome"
                 android:inputType="textEmailAddress"
                 android:selectAllOnFocus="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +57,8 @@
                 android:selectAllOnFocus="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:autofillHints="" />
 
             <EditText
                 android:id="@+id/username6"
@@ -67,12 +68,13 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="24dp"
 
-                android:hint="Data de nascimento"
+                android:hint="@string/data_de_nascimento"
                 android:inputType="textEmailAddress"
                 android:selectAllOnFocus="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:autofillHints="" />
 
             <EditText
                 android:id="@+id/username7"
@@ -82,12 +84,13 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="24dp"
 
-                android:hint="Telefone"
+                android:hint="@string/telefone"
                 android:inputType="textEmailAddress"
                 android:selectAllOnFocus="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:autofillHints="" />
 
             <EditText
                 android:id="@+id/username8"
@@ -97,12 +100,13 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="24dp"
 
-                android:hint="CPF"
+                android:hint="@string/cpf"
                 android:inputType="textEmailAddress"
                 android:selectAllOnFocus="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:autofillHints="" />
 
             <EditText
                 android:id="@+id/password4"
@@ -112,14 +116,15 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="24dp"
 
-                android:hint="Senha"
+                android:hint="@string/senha"
                 android:imeActionLabel="@string/action_sign_in_short"
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"
                 android:selectAllOnFocus="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/username" />
+                app:layout_constraintTop_toBottomOf="@+id/username"
+                android:autofillHints="" />
 
             <EditText
                 android:id="@+id/password5"
@@ -129,14 +134,15 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="24dp"
 
-                android:hint="Confirmar senha"
+                android:hint="@string/confirmar_senha"
                 android:imeActionLabel="@string/action_sign_in_short"
                 android:imeOptions="actionDone"
                 android:inputType="textPassword"
                 android:selectAllOnFocus="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/username" />
+                app:layout_constraintTop_toBottomOf="@+id/username"
+                android:autofillHints="" />
 
             <Button
                 android:id="@+id/signup2"
@@ -147,7 +153,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="48dp"
                 android:enabled="true"
-                android:text="Cadastrar"
+                android:text="@string/cadastrar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.506"
                 app:layout_constraintStart_toStartOf="parent"
