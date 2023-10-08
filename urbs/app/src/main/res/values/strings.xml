@@ -16,4 +16,5 @@
     <string name="telefone">Telefone</string>
     <string name="data_de_nascimento">Data de nascimento</string>
     <string name="nome">Nome</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

@@ -27,6 +27,7 @@ import com.example.urbs.R;
 import com.example.urbs.signup.SignUpActivity;
 import com.example.urbs.ui.login.LoginViewModel;
 import com.example.urbs.ui.login.LoginViewModelFactory;
+import com.example.urbs.ui.map.MapsActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -116,9 +117,12 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+                startActivity(intent);
+
+//                loadingProgressBar.setVisibility(View.VISIBLE);
+//                loginViewModel.login(usernameEditText.getText().toString(),
+//                        passwordEditText.getText().toString());
             }
         });
 
