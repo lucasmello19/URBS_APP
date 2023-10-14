@@ -12,11 +12,22 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.content.pm.PackageManager;
+import androidx.core.content.ContextCompat;
+import android.location.Location;
+
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import androidx.core.app.ActivityCompat;
+
 import com.example.urbs.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private Location userLocation;
+    private static final int PERMISSIONS_REQUEST_LOCATION = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +66,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        // Solicitar permissões de localização em tempo de execução
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            showMyLocalization();
+        } else {
+            // Solicitar permissão ao usuário
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
+            showMyLocalization();
+        }
+    }
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    public void showMyLocalization() {
+        mMap.setMyLocationEnabled(true);
+        // Obter a localização do usuário
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                if (location != null) {
+                    // Use a localização do dispositivo
+                    userLocation = location;
+
+                    // Exemplo de marcação da localização no mapa
+                    LatLng userLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
+//                    mMap.addMarker(new MarkerOptions().position(userLatLng).title("Sua Localização"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(userLatLng));
+                }
+            }
+        });
     }
 }
