@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.location.Location;
+import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -41,6 +42,7 @@ public class LocationUpdateService extends Service {
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
                     // Faça algo com a localização em tempo real
+                    Log.d("myTag", "This is my message");
                 }
             }
         };

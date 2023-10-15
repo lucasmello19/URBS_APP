@@ -2,9 +2,11 @@ package com.example.urbs.ui.map;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.urbs.service.BootReceiver;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,7 +36,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PERMISSIONS_REQUEST_LOCATION = 1;
     private FusedLocationProviderClient fusedLocationClient;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +44,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
+        BootReceiver bootReceiver = new BootReceiver();
+        IntentFilter filter = new IntentFilter("android.intent.action.BOOT_COMPLETED");
+        registerReceiver(bootReceiver, filter);
     }
 
     @Override
