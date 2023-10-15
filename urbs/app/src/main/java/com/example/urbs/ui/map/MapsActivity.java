@@ -21,6 +21,10 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+
 import com.example.urbs.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -28,6 +32,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private Location userLocation;
     private static final int PERMISSIONS_REQUEST_LOCATION = 1;
+    private FusedLocationProviderClient fusedLocationClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,33 +73,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         // Solicitar permissões de localização em tempo de execução
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            showMyLocalization();
-        } else {
-            // Solicitar permissão ao usuário
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
+        } else {
             showMyLocalization();
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSIONS_REQUEST_LOCATION) {
+            // Verifique se a resposta de permissão foi concedida ou negada
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permissão concedida, execute a ação desejada
+                showMyLocalization();
+            } else {
+                // Permissão negada, lide com isso conforme necessário
+            }
+        }
+    }
+
+
     public void showMyLocalization() {
         mMap.setMyLocationEnabled(true);
         // Obter a localização do usuário
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+        LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10000) // Intervalo em milissegundos (10 segundos)
+                .setFastestInterval(5000); // Intervalo mais rápido em milissegundos (5 segundos)
+
+        LocationCallback locationCallback = new LocationCallback() {
             @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    // Use a localização do dispositivo
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    // A localização do usuário está disponível em "location"
                     userLocation = location;
-
-                    // Exemplo de marcação da localização no mapa
+                    // Faça algo com a localização em tempo real
                     LatLng userLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
-//                    mMap.addMarker(new MarkerOptions().position(userLatLng).title("Sua Localização"));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(userLatLng));
                 }
             }
-        });
+        };
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+
     }
 }
