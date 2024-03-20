@@ -31,6 +31,10 @@ import java.util.regex.Pattern;
 import android.widget.Toast;
 import com.google.i18n.phonenumbers.NumberParseException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 public class SignUpActivity extends AppCompatActivity {
 
     private ApiManager apiManager;
