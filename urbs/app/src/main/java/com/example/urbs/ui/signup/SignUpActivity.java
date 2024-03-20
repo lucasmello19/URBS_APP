@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.urbs.R;
 import com.example.urbs.data.model.User;
@@ -13,6 +16,16 @@ public class SignUpActivity extends AppCompatActivity {
 
     private ApiManager apiManager;
 
+    private EditText nameEditText;
+    private EditText emailEditText;
+    private EditText birthdayEditText;
+    private EditText phoneEditText;
+    private EditText cpfEditText;
+    private EditText passwordEditText;
+    private EditText passwordConfirmEditText;
+
+    private Button signButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,13 +34,17 @@ public class SignUpActivity extends AppCompatActivity {
 
         apiManager = new ApiManager();
 
-//        final EditText usernameEditText = findViewById(R.id.username);
-//        final EditText passwordEditText = findViewById(R.id.password);
+        nameEditText = findViewById(R.id.name);
+        emailEditText = findViewById(R.id.email);
+        birthdayEditText = findViewById(R.id.birthday);
+        phoneEditText = findViewById(R.id.phone);
+        cpfEditText = findViewById(R.id.cpf);
+        passwordEditText = findViewById(R.id.password);
+        passwordConfirmEditText = findViewById(R.id.confirmpassword);
 
-//        final Button signButton = findViewById(R.id.login);
+        signButton = findViewById(R.id.signup);
 
 
-        // Criando um objeto User com dados de exemplo
         User user = new User("John Doe",
                 "johndoe1@example.com",
                 "1990-01-01",
@@ -49,12 +66,12 @@ public class SignUpActivity extends AppCompatActivity {
 //            }
 //        });
 
-//        signButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+        signButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
 
@@ -64,8 +81,7 @@ public class SignUpActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            // Ação quando a seta de retorno é pressionada
-            onBackPressed(); // Isso pode ser usado para fechar a SegundaActivity e voltar para a PrimeiraActivity
+            onBackPressed();
             return true;
         }
 
