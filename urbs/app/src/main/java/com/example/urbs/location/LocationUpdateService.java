@@ -1,4 +1,4 @@
-package com.example.urbs.service;
+package com.example.urbs.location;
 
 import android.app.Service;
 import android.content.Intent;
@@ -21,16 +21,13 @@ public class LocationUpdateService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        // Inicialize o FusedLocationProviderClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        // Configurar o LocationRequest para solicitar atualizações de localização
         locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(10000) // Intervalo em milissegundos (10 segundos)
                 .setFastestInterval(5000); // Intervalo mais rápido em milissegundos (5 segundos)
 
-        // Configurar o LocationCallback para lidar com as atualizações de localização
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -38,11 +35,9 @@ public class LocationUpdateService extends Service {
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
-                    // A localização do usuário está disponível em "location"
                     double latitude = location.getLatitude();
                     double longitude = location.getLongitude();
-                    // Faça algo com a localização em tempo real
-                    Log.d("myTag", "This is my message");
+                    //TODO: - encaminhar localização aqui.
                 }
             }
         };

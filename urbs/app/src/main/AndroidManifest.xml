@@ -34,13 +34,13 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-        <receiver android:name="com.example.urbs.service.BootReceiver" >
+        <receiver android:name="com.example.urbs.location.BootReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <service
-            android:name="com.example.urbs.service.LocationUpdateService"
+            android:name="com.example.urbs.location.LocationUpdateService"
             android:enabled="true"
             android:exported="false">
         </service>
@@ -48,7 +48,7 @@
         <activity
             android:name=".ui.map.MapsActivity"
             android:label="@string/title_activity_maps"></activity>
-        <activity android:name=".signup.SignUpActivity" />
+        <activity android:name=".ui.signup.SignUpActivity" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:label="@string/app_name">

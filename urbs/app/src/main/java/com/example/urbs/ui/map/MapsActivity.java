@@ -6,19 +6,17 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.example.urbs.service.BootReceiver;
+import com.example.urbs.location.BootReceiver;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.content.pm.PackageManager;
 import androidx.core.content.ContextCompat;
 import android.location.Location;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import androidx.core.app.ActivityCompat;
@@ -101,13 +99,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void showMyLocalization() {
         mMap.setMyLocationEnabled(true);
-        // Obter a localização do usuário
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         LocationRequest locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10000) // Intervalo em milissegundos (10 segundos)
-                .setFastestInterval(5000); // Intervalo mais rápido em milissegundos (5 segundos)
+                .setInterval(10000)
+                .setFastestInterval(5000);
 
         LocationCallback locationCallback = new LocationCallback() {
             @Override
@@ -116,7 +113,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
-                    // A localização do usuário está disponível em "location"
                     userLocation = location;
                     // Faça algo com a localização em tempo real
                     LatLng userLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());

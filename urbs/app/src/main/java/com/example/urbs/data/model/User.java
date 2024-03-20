@@ -24,6 +24,4 @@ public class User {
         this.password = password;
         this.cpf = cpf;
     }
-
-    // Getters e setters
 }

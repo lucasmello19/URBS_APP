@@ -1,4 +1,4 @@
-package com.example.urbs.service;
+package com.example.urbs.location;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

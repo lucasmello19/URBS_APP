@@ -1,9 +1,8 @@
-package com.example.urbs.signup;
+package com.example.urbs.ui.signup;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.urbs.R;
@@ -22,6 +21,12 @@ public class SignUpActivity extends AppCompatActivity {
 
         apiManager = new ApiManager();
 
+//        final EditText usernameEditText = findViewById(R.id.username);
+//        final EditText passwordEditText = findViewById(R.id.password);
+
+//        final Button signButton = findViewById(R.id.login);
+
+
         // Criando um objeto User com dados de exemplo
         User user = new User("John Doe",
                 "johndoe1@example.com",
@@ -30,22 +35,29 @@ public class SignUpActivity extends AppCompatActivity {
                 "password123",
                 "34589677024");
 
-        // Fazendo a chamada de API para registrar o usuário
-        apiManager.registerUser(user, new ApiManager.ApiCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                // Usuário registrado com sucesso
-                Log.d("MainActivity", "Usuário registrado com sucesso");
-            }
+//        // Fazendo a chamada de API para registrar o usuário
+//        apiManager.registerUser(user, new ApiManager.ApiCallback<Void>() {
+//            @Override
+//            public void onSuccess(Void result) {
+//                // Usuário registrado com sucesso
+//                Log.d("MainActivity", "Usuário registrado com sucesso");
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable t) {
+//                Log.e("MainActivity", "Falha ao registrar o usuário: " + t.getMessage());
+//            }
+//        });
 
-            @Override
-            public void onFailure(Throwable t) {
-                Log.e("MainActivity", "Falha ao registrar o usuário: " + t.getMessage());
-            }
-        });
-
-
+//        signButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
