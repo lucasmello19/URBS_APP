@@ -45,6 +45,32 @@ public class ApiManager {
         });
     }
 
+    public void loginUser(String email, String password, final ApiCallback<Void> callback) {
+        Call<Void> call = apiService.loginUser("login", email, password);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(null);
+                } else {
+                    String errorMessage = null;
+                    try {
+                        errorMessage = parseErrorMessage(response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    callback.onFailure(new Exception(errorMessage != null ? errorMessage : "Registration failed"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onFailure(t);
+            }
+        });
+    }
+
+
     // Interface para callback
     public interface ApiCallback<T> {
         void onSuccess(T result);
