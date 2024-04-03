@@ -1,4 +1,5 @@
 package com.example.urbs.service;
+import com.example.urbs.data.model.LoginResponse;
 import com.example.urbs.data.model.User;
 
 import retrofit2.Call;
@@ -11,5 +12,5 @@ public interface ApiService {
     @POST("{path}")
     Call<Void> registerUser(@Path("path") String path, @Body User user);
     @POST("{path}")
-    Call<Void> loginUser(@Path("path") String path, @Query("email") String email, @Query("password") String password);
+    Call<LoginResponse> loginUser(@Path("path") String path, @Query("email") String email, @Query("password") String password);
 }

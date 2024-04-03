@@ -9,7 +9,15 @@ public class RetrofitClient {
     private static final String BASE_URL = "https://backend.tccurbstads.com/";
 
     public static Retrofit getClient() {
+        return getClient(null);
+    }
+
+    public static Retrofit getClient(String accessToken) {
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        if (accessToken != null) {
+            // Adiciona o interceptor de autenticação apenas se o accessToken não for nulo
+            httpClient.addInterceptor(new AuthInterceptor(accessToken));
+        }
         httpClient.addInterceptor(new LoggingInterceptor()); // Adiciona o interceptor de log
 
         if (retrofit == null) {

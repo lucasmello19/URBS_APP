@@ -21,6 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     private ApiManager apiManager;
     private EditText usernameEditText;
     private EditText passwordEditText;
+    private ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,16 +34,13 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
         final Button signupButton = findViewById(R.id.signup);
+        progressBar = findViewById(R.id.progress);
 
-        final ProgressBar loadingProgressBar = findViewById(R.id.loading);
+        progressBar.setVisibility(View.GONE);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-//                loadingProgressBar.setVisibility(View.VISIBLE);
-//                loginViewModel.login(usernameEditText.getText().toString(),
-//                        passwordEditText.getText().toString());
 
                 String name = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
@@ -56,10 +54,15 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
+                progressBar.setVisibility(View.VISIBLE);
+                loginButton.setEnabled(false);
 
-                apiManager.loginUser(name, password, new ApiManager.ApiCallback<Void>() {
+                apiManager.loginUser(LoginActivity.this, name, password, new ApiManager.ApiCallback<Void>() {
                     @Override
                     public void onSuccess(Void result) {
+                        progressBar.setVisibility(View.GONE);
+                        loginButton.setEnabled(true);
+
                         Toast.makeText(LoginActivity.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
                         startActivity(intent);
@@ -67,6 +70,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Throwable t) {
+                        loginButton.setEnabled(true);
+                        progressBar.setVisibility(View.GONE);
                         Toast.makeText(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });

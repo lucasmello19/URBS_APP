@@ -71,13 +71,20 @@
                 android:inputType="textPassword"
                 android:selectAllOnFocus="true" />
 
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp" />
+
             <Button
                 android:id="@+id/login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginStart="48dp"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="25dp"
                 android:layout_marginEnd="48dp"
                 android:layout_marginBottom="64dp"
                 android:enabled="true"
