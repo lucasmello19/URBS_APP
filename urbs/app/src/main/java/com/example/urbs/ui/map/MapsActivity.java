@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.location.BootReceiver;
 import com.example.urbs.service.ApiManager;
+import com.example.urbs.utils.AccessTokenManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,22 +53,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         IntentFilter filter = new IntentFilter("android.intent.action.BOOT_COMPLETED");
         registerReceiver(bootReceiver, filter);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String accessToken = sharedPreferences.getString("access_token", ""); // "" é o valor padrão caso não haja nenhum access_token armazenado
+        String accessToken = AccessTokenManager.getInstance(MapsActivity.this).getAccessToken();
 
-        apiManager = new ApiManager(MapsActivity.this);
+        if (accessToken != null) {
 
-        apiManager.getLine(new ApiManager.ApiCallback<ArrayList<LineResponse>>() {
-            @Override
-            public void onSuccess(ArrayList<LineResponse> result) {
-                // Tratar sucesso da chamada
-            }
+            apiManager = new ApiManager(MapsActivity.this);
 
-            @Override
-            public void onFailure(Throwable throwable) {
-                // Tratar falha na chamada
-            }
-        });
+            apiManager.getLine(new ApiManager.ApiCallback<ArrayList<LineResponse>>() {
+                @Override
+                public void onSuccess(ArrayList<LineResponse> result) {
+                    // Tratar sucesso da chamada
+                }
+
+                @Override
+                public void onFailure(Throwable throwable) {
+                    // Tratar falha na chamada
+                }
+            });
+        }
     }
 
     @Override

@@ -22,13 +22,12 @@ public class RetrofitClient {
         }
         httpClient.addInterceptor(new LoggingInterceptor()); // Adiciona o interceptor de log
 
-        if (retrofit == null) {
-            retrofit = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .client(httpClient.build()) // Configura o cliente OkHttp com o interceptor
-                    .build();
-        }
+        retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(httpClient.build()) // Configura o cliente OkHttp com o interceptor
+                .build();
+
         return retrofit;
     }
 }

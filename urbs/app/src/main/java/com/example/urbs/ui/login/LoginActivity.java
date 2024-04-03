@@ -64,10 +64,13 @@ public class LoginActivity extends AppCompatActivity {
                     public void onSuccess(Void result) {
                         progressBar.setVisibility(View.GONE);
                         loginButton.setEnabled(true);
+                        String accessToken = AccessTokenManager.getInstance(LoginActivity.this).getAccessToken();
 
-                        Toast.makeText(LoginActivity.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
-                        startActivity(intent);
+                        if (accessToken != null) {
+                            Toast.makeText(LoginActivity.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+                            startActivity(intent);
+                        }
                     }
 
                     @Override
