@@ -16,6 +16,7 @@ import com.example.urbs.R;
 import com.example.urbs.service.ApiManager;
 import com.example.urbs.ui.signup.SignUpActivity;
 import com.example.urbs.ui.map.MapsActivity;
+import com.example.urbs.utils.AccessTokenManager;
 
 public class LoginActivity extends AppCompatActivity {
     private ApiManager apiManager;
@@ -28,7 +29,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        apiManager = new ApiManager();
+
+        apiManager = new ApiManager(LoginActivity.this);
 
         usernameEditText = findViewById(R.id.name);
         passwordEditText = findViewById(R.id.password);
@@ -85,6 +87,13 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        String accessToken = AccessTokenManager.getInstance(LoginActivity.this).getAccessToken();
+
+        if (accessToken != null) {
+            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+            startActivity(intent);
+        }
     }
 
     public boolean onValidateEmail(View view) {

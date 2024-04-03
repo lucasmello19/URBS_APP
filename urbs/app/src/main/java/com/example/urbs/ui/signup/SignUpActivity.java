@@ -60,7 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        apiManager = new ApiManager();
+        apiManager = new ApiManager(SignUpActivity.this);
 
         nameEditText = findViewById(R.id.name);
         emailEditText = findViewById(R.id.email);

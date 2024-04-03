@@ -3,10 +3,14 @@ package com.example.urbs.ui.map;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.MenuItem;
 
+import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.location.BootReceiver;
+import com.example.urbs.service.ApiManager;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,8 +31,10 @@ import com.google.android.gms.location.LocationResult;
 
 import com.example.urbs.R;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.util.ArrayList;
 
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+    private ApiManager apiManager;
     private GoogleMap mMap;
     private Location userLocation;
     private static final int PERMISSIONS_REQUEST_LOCATION = 1;
@@ -45,6 +51,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         BootReceiver bootReceiver = new BootReceiver();
         IntentFilter filter = new IntentFilter("android.intent.action.BOOT_COMPLETED");
         registerReceiver(bootReceiver, filter);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String accessToken = sharedPreferences.getString("access_token", ""); // "" é o valor padrão caso não haja nenhum access_token armazenado
+
+        apiManager = new ApiManager(MapsActivity.this);
+
+        apiManager.getLine(new ApiManager.ApiCallback<ArrayList<LineResponse>>() {
+            @Override
+            public void onSuccess(ArrayList<LineResponse> result) {
+                // Tratar sucesso da chamada
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                // Tratar falha na chamada
+            }
+        });
     }
 
     @Override

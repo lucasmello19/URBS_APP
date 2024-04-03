@@ -18,7 +18,6 @@ public class AuthInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Request originalRequest = chain.request();
 
-        // Adiciona o token de acesso como um cabeçalho na solicitação original
         Request modifiedRequest = originalRequest.newBuilder()
                 .header("Authorization", "Bearer " + accessToken)
                 .build();
