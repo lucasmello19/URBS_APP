@@ -1,10 +1,12 @@
 package com.example.urbs.service;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.shapes.Shape;
 import android.preference.PreferenceManager;
 
 import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.data.model.LoginResponse;
+import com.example.urbs.data.model.ShapeResponse;
 import com.example.urbs.data.model.User;
 
 import java.io.IOException;
@@ -110,6 +112,32 @@ public class ApiManager {
             }
         });
     }
+
+    public void getShape(String cod, final ApiCallback<ArrayList<ShapeResponse>> callback) {
+        Call<ArrayList<ShapeResponse>> call = apiService.getShape("shape/" + cod);
+        call.enqueue(new Callback<ArrayList<ShapeResponse>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ShapeResponse>> call, Response<ArrayList<ShapeResponse>> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body()); // Passa a lista de linhas para o método onSuccess
+                } else {
+                    String errorMessage = null;
+                    try {
+                        errorMessage = parseErrorMessage(response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    callback.onFailure(new Exception(errorMessage != null ? errorMessage : "Registration failed"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ShapeResponse>> call, Throwable t) {
+                callback.onFailure(t);
+            }
+        });
+    }
+
 
 
 

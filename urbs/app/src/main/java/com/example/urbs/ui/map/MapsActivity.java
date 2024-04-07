@@ -52,25 +52,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         BootReceiver bootReceiver = new BootReceiver();
         IntentFilter filter = new IntentFilter("android.intent.action.BOOT_COMPLETED");
         registerReceiver(bootReceiver, filter);
-
-        String accessToken = AccessTokenManager.getInstance(MapsActivity.this).getAccessToken();
-
-        if (accessToken != null) {
-
-            apiManager = new ApiManager(MapsActivity.this);
-
-            apiManager.getLine(new ApiManager.ApiCallback<ArrayList<LineResponse>>() {
-                @Override
-                public void onSuccess(ArrayList<LineResponse> result) {
-                    // Tratar sucesso da chamada
-                }
-
-                @Override
-                public void onFailure(Throwable throwable) {
-                    // Tratar falha na chamada
-                }
-            });
-        }
     }
 
     @Override

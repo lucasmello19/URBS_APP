@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.urbs.R;
 import com.example.urbs.service.ApiManager;
+import com.example.urbs.ui.Line.LinesActivity;
 import com.example.urbs.ui.signup.SignUpActivity;
 import com.example.urbs.ui.map.MapsActivity;
 import com.example.urbs.utils.AccessTokenManager;
@@ -68,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         if (accessToken != null) {
                             Toast.makeText(LoginActivity.this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+                            Intent intent = new Intent(LoginActivity.this, LinesActivity.class);
                             startActivity(intent);
                         }
                     }
@@ -94,7 +95,7 @@ public class LoginActivity extends AppCompatActivity {
         String accessToken = AccessTokenManager.getInstance(LoginActivity.this).getAccessToken();
 
         if (accessToken != null) {
-            Intent intent = new Intent(LoginActivity.this, MapsActivity.class);
+            Intent intent = new Intent(LoginActivity.this, LinesActivity.class);
             startActivity(intent);
         }
     }

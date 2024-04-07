@@ -1,6 +1,7 @@
 package com.example.urbs.service;
 import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.data.model.LoginResponse;
+import com.example.urbs.data.model.ShapeResponse;
 import com.example.urbs.data.model.User;
 
 import java.util.ArrayList;
@@ -19,4 +20,6 @@ public interface ApiService {
     Call<LoginResponse> loginUser(@Path("path") String path, @Query("email") String email, @Query("password") String password);
     @GET("{path}")
     Call<ArrayList<LineResponse>> getLine(@Path("path") String path);
+    @GET("{path}")
+    Call<ArrayList<ShapeResponse>> getShape(@Path("path") String path);
 }
