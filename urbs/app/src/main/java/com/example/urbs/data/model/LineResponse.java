@@ -1,11 +1,18 @@
 package com.example.urbs.data.model;
 
-public class LineResponse {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class LineResponse implements Parcelable {
     private String COD;
     private String NOME;
     private String SOMENTE_CARTAO;
     private String CATEGORIA_SERVICO;
     private String NOME_COR;
+
+    // Construtor vazio
+    public LineResponse() {
+    }
 
     // Getters e Setters
 
@@ -47,5 +54,41 @@ public class LineResponse {
 
     public void setNOME_COR(String NOME_COR) {
         this.NOME_COR = NOME_COR;
+    }
+
+    // Implementação dos métodos da interface Parcelable
+
+    protected LineResponse(Parcel in) {
+        COD = in.readString();
+        NOME = in.readString();
+        SOMENTE_CARTAO = in.readString();
+        CATEGORIA_SERVICO = in.readString();
+        NOME_COR = in.readString();
+    }
+
+    public static final Creator<LineResponse> CREATOR = new Creator<LineResponse>() {
+        @Override
+        public LineResponse createFromParcel(Parcel in) {
+            return new LineResponse(in);
+        }
+
+        @Override
+        public LineResponse[] newArray(int size) {
+            return new LineResponse[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(COD);
+        dest.writeString(NOME);
+        dest.writeString(SOMENTE_CARTAO);
+        dest.writeString(CATEGORIA_SERVICO);
+        dest.writeString(NOME_COR);
     }
 }

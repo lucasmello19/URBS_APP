@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.data.model.ShapeResponse;
 import com.example.urbs.data.model.StopResponse;
 import com.example.urbs.location.BootReceiver;
@@ -56,6 +57,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private List<ShapeResponse> shapeList;
     private List<StopResponse> stopList;
+    private LineResponse line;
 
     List<LatLng> routePoints;
 
@@ -66,11 +68,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         shapeList = getIntent().getParcelableArrayListExtra("shape");
         stopList = getIntent().getParcelableArrayListExtra("stops");
+        line = getIntent().getParcelableExtra("line");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        AppCompatActivity activity = (AppCompatActivity) mapFragment.getActivity();
+
+// Define o título na barra de navegação
+        if (activity != null) {
+            activity.setTitle(line.getNOME());
+        }
+
+
 //        BootReceiver bootReceiver = new BootReceiver();
 //        IntentFilter filter = new IntentFilter("android.intent.action.BOOT_COMPLETED");
 //        registerReceiver(bootReceiver, filter);
@@ -179,16 +190,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
 
     }
-
-//    private void addMarkersToMap() {
-//        if (mMap != null && shapeList != null) {
-//            for (ShapeResponse shapeResponse : shapeList) {
-//                List<Double> coord = shapeResponse.getCoord();
-//                LatLng latLng = new LatLng(coord.get(1), coord.get(0)); // Índice 1 é a latitude e o índice 0 é a longitude
-//                mMap.addMarker(new MarkerOptions().position(latLng));
-//            }
-//        }
-//    }
 
     private void drawRoute() {
         if (mMap != null && shapeList != null) {

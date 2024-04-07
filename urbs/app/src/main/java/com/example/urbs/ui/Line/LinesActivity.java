@@ -61,7 +61,7 @@ public class LinesActivity extends AppCompatActivity {
                     public void onItemClick(LineResponse line) {
                         // Tratar clique no item da lista
                         Log.d("LinesActivity", "Item selecionado: " + line.getNOME());
-                        getShape(line.getCOD());
+                        getShape(line);
                     }
                 });
             }
@@ -74,13 +74,13 @@ public class LinesActivity extends AppCompatActivity {
         });
     }
 
-    public void getShape(final String cod) {
-        apiManager.getShape(cod, new ApiManager.ApiCallback<ArrayList<ShapeResponse>>() {
+    public void getShape(final LineResponse line) {
+        apiManager.getShape(line.getCOD(), new ApiManager.ApiCallback<ArrayList<ShapeResponse>>() {
             @Override
             public void onSuccess(ArrayList<ShapeResponse> result) {
                 // Tratar sucesso da chamada
                 shapeList = result;
-                getStops(cod);
+                getStops(line);
             }
 
             @Override
@@ -91,8 +91,8 @@ public class LinesActivity extends AppCompatActivity {
         });
     }
 
-    public void getStops(String cod) {
-        apiManager.getStops(cod, new ApiManager.ApiCallback<ArrayList<StopResponse>>() {
+    public void getStops(final LineResponse line) {
+        apiManager.getStops(line.getCOD(), new ApiManager.ApiCallback<ArrayList<StopResponse>>() {
             @Override
             public void onSuccess(ArrayList<StopResponse> result) {
                 // Tratar sucesso da chamada
@@ -100,6 +100,7 @@ public class LinesActivity extends AppCompatActivity {
                 Intent intent = new Intent(LinesActivity.this, MapsActivity.class);
                 intent.putParcelableArrayListExtra("shape", (ArrayList<? extends Parcelable>) shapeList);
                 intent.putParcelableArrayListExtra("stops", (ArrayList<? extends Parcelable>) stopsList);
+                intent.putExtra("line", line);
                 startActivity(intent);
             }
 
