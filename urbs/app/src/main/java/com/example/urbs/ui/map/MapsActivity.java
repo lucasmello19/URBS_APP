@@ -27,11 +27,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.content.pm.PackageManager;
+
 import androidx.core.content.ContextCompat;
+
 import android.location.Location;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.LocationCallback;
@@ -76,9 +79,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         AppCompatActivity activity = (AppCompatActivity) mapFragment.getActivity();
 
-// Define o título na barra de navegação
         if (activity != null) {
-            activity.setTitle(line.getNOME());
+            activity.setTitle("Linha - " + line.getNOME());
         }
 
 
@@ -119,13 +121,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             showMyLocalization();
         }
-        // Adicionar marcadores no mapa com base nas coordenadas
-//        addMarkersToMap();
-
-        // Desenhar a rota no mapa
         drawRoute();
         addMarkersToMap();
-
 
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
@@ -134,7 +131,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        // Configurar o listener de clique para os marcadores
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -143,8 +139,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             }
         });
-
-
     }
 
     @Override

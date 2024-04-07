@@ -1,4 +1,5 @@
 package com.example.urbs.service;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.shapes.Shape;
@@ -63,7 +64,7 @@ public class ApiManager {
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
                     // Verifica se o corpo da resposta não é nulo
-                   LoginResponse loginResponse = response.body();
+                    LoginResponse loginResponse = response.body();
                     if (loginResponse != null) {
                         String accessToken = loginResponse.getAccess_token();
                         if (accessToken != null && !accessToken.isEmpty()) {
@@ -167,6 +168,7 @@ public class ApiManager {
     // Interface para callback
     public interface ApiCallback<T> {
         void onSuccess(T result);
+
         void onFailure(Throwable t);
     }
 
@@ -182,5 +184,4 @@ public class ApiManager {
             return null;
         }
     }
-
 }

@@ -29,6 +29,7 @@ import java.util.InputMismatchException;
 import java.util.regex.Pattern;
 
 import android.widget.Toast;
+
 import com.google.i18n.phonenumbers.NumberParseException;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -59,6 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("URBS - Cadastro");
 
         apiManager = new ApiManager(SignUpActivity.this);
 
@@ -117,11 +119,11 @@ public class SignUpActivity extends AppCompatActivity {
 //                    Toast.makeText(SignUpActivity.this, "CPF inválido", Toast.LENGTH_SHORT).show();
 //                    return;
 //                }
-                if (password.isEmpty()){
+                if (password.isEmpty()) {
                     Toast.makeText(SignUpActivity.this, "Senha inválida", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (!password.equals(confirm)){
+                if (!password.equals(confirm)) {
                     Toast.makeText(SignUpActivity.this, "Senha de confirmação inválida", Toast.LENGTH_SHORT).show();
                     return;
                 }
