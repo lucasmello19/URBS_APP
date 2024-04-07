@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.urbs.R;
 import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.data.model.ShapeResponse;
+import com.example.urbs.data.model.StopResponse;
 import com.example.urbs.service.ApiManager;
 import com.example.urbs.ui.login.LoginActivity;
 import com.example.urbs.ui.map.MapsActivity;
@@ -27,6 +28,7 @@ public class LinesActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<LineResponse> lineList;
     private List<ShapeResponse> shapeList;
+    private List<StopResponse> stopsList;
 
     private ApiManager apiManager;
 
@@ -72,15 +74,13 @@ public class LinesActivity extends AppCompatActivity {
         });
     }
 
-    public void getShape(String cod) {
+    public void getShape(final String cod) {
         apiManager.getShape(cod, new ApiManager.ApiCallback<ArrayList<ShapeResponse>>() {
             @Override
             public void onSuccess(ArrayList<ShapeResponse> result) {
                 // Tratar sucesso da chamada
                 shapeList = result;
-                Intent intent = new Intent(LinesActivity.this, MapsActivity.class);
-                intent.putParcelableArrayListExtra("shape", (ArrayList<? extends Parcelable>) shapeList); // Passa a lista como ParcelableArrayListExtra
-                startActivity(intent);
+                getStops(cod);
             }
 
             @Override
@@ -91,4 +91,23 @@ public class LinesActivity extends AppCompatActivity {
         });
     }
 
+    public void getStops(String cod) {
+        apiManager.getStops(cod, new ApiManager.ApiCallback<ArrayList<StopResponse>>() {
+            @Override
+            public void onSuccess(ArrayList<StopResponse> result) {
+                // Tratar sucesso da chamada
+                stopsList = result;
+                Intent intent = new Intent(LinesActivity.this, MapsActivity.class);
+                intent.putParcelableArrayListExtra("shape", (ArrayList<? extends Parcelable>) shapeList);
+                intent.putParcelableArrayListExtra("stops", (ArrayList<? extends Parcelable>) stopsList);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                // Tratar falha na chamada
+                Log.e("LinesActivity", "Falha ao obter linhas: " + throwable.getMessage());
+            }
+        });
+    }
 }

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.urbs.data.model.ShapeResponse;
+import com.example.urbs.data.model.StopResponse;
 import com.example.urbs.location.BootReceiver;
 import com.example.urbs.service.ApiManager;
 
@@ -21,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.content.pm.PackageManager;
@@ -37,6 +39,7 @@ import com.google.android.gms.location.LocationResult;
 
 import com.example.urbs.R;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -52,6 +55,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FusedLocationProviderClient fusedLocationClient;
 
     private List<ShapeResponse> shapeList;
+    private List<StopResponse> stopList;
+
     List<LatLng> routePoints;
 
     @Override
@@ -60,6 +65,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_maps);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         shapeList = getIntent().getParcelableArrayListExtra("shape");
+        stopList = getIntent().getParcelableArrayListExtra("stops");
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -106,6 +113,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Desenhar a rota no mapa
         drawRoute();
+        addMarkersToMap();
+
 
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
@@ -113,6 +122,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 focusMapRegion();
             }
         });
+
+        // Configurar o listener de clique para os marcadores
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                // Mostrar info window ao clicar no marcador
+                marker.showInfoWindow();
+                return true;
+            }
+        });
+
 
     }
 
@@ -174,7 +194,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (mMap != null && shapeList != null) {
             PolylineOptions polylineOptions = new PolylineOptions();
             routePoints = new ArrayList<>();
-            polylineOptions.color(Color.RED);
+            polylineOptions.color(Color.GRAY);
             for (ShapeResponse shapeResponse : shapeList) {
                 List<Double> coord = shapeResponse.getCoord();
                 LatLng latLng = new LatLng(coord.get(1), coord.get(0));
@@ -204,4 +224,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.animateCamera(cu);
     }
 
+    private void addMarkersToMap() {
+        if (mMap != null && stopList != null) {
+            for (StopResponse stop : stopList) {
+                List<Object> coord = stop.getCoord();
+                double latitude = (double) coord.get(1);
+                double longitude = (double) coord.get(0);
+                LatLng latLng = new LatLng(latitude, longitude);
+
+                // Adicione um marcador personalizado com nome e sentido como snippet
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(latLng)
+                        .title(stop.getNome()) // Define o nome da parada como título do marcador
+                        .snippet("Sentido: " + stop.getSentido()); // Define o sentido da parada como snippet do marcador
+
+                mMap.addMarker(markerOptions);
+            }
+        }
+    }
 }

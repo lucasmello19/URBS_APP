@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.data.model.LoginResponse;
 import com.example.urbs.data.model.ShapeResponse;
+import com.example.urbs.data.model.StopResponse;
 import com.example.urbs.data.model.User;
 
 import java.io.IOException;
@@ -138,8 +139,30 @@ public class ApiManager {
         });
     }
 
+    public void getStops(String cod, final ApiCallback<ArrayList<StopResponse>> callback) {
+        Call<ArrayList<StopResponse>> call = apiService.getStops("stops/" + cod);
+        call.enqueue(new Callback<ArrayList<StopResponse>>() {
+            @Override
+            public void onResponse(Call<ArrayList<StopResponse>> call, Response<ArrayList<StopResponse>> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body()); // Passa a lista de linhas para o método onSuccess
+                } else {
+                    String errorMessage = null;
+                    try {
+                        errorMessage = parseErrorMessage(response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    callback.onFailure(new Exception(errorMessage != null ? errorMessage : "Registration failed"));
+                }
+            }
 
-
+            @Override
+            public void onFailure(Call<ArrayList<StopResponse>> call, Throwable t) {
+                callback.onFailure(t);
+            }
+        });
+    }
 
     // Interface para callback
     public interface ApiCallback<T> {
