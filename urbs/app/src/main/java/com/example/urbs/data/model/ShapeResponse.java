@@ -4,7 +4,14 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class ShapeResponse {
+import android.os.Parcel;
+import android.os.Parcelable;
+import com.google.gson.annotations.SerializedName;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ShapeResponse implements Parcelable {
+
     @SerializedName("SHP")
     private String shp;
 
@@ -37,4 +44,37 @@ public class ShapeResponse {
     public void setCoord(List<Double> coord) {
         this.coord = coord;
     }
+
+    // Métodos necessários para implementar Parcelable
+
+    protected ShapeResponse(Parcel in) {
+        shp = in.readString();
+        cod = in.readString();
+        coord = new ArrayList<>();
+        in.readList(coord, Double.class.getClassLoader());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(shp);
+        dest.writeString(cod);
+        dest.writeList(coord);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<ShapeResponse> CREATOR = new Creator<ShapeResponse>() {
+        @Override
+        public ShapeResponse createFromParcel(Parcel in) {
+            return new ShapeResponse(in);
+        }
+
+        @Override
+        public ShapeResponse[] newArray(int size) {
+            return new ShapeResponse[size];
+        }
+    };
 }

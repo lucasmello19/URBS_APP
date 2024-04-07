@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -13,6 +15,7 @@ import com.example.urbs.R;
 import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.data.model.ShapeResponse;
 import com.example.urbs.service.ApiManager;
+import com.example.urbs.ui.login.LoginActivity;
 import com.example.urbs.ui.map.MapsActivity;
 import com.example.urbs.utils.AccessTokenManager;
 
@@ -75,7 +78,9 @@ public class LinesActivity extends AppCompatActivity {
             public void onSuccess(ArrayList<ShapeResponse> result) {
                 // Tratar sucesso da chamada
                 shapeList = result;
-                // Configurar o RecyclerView
+                Intent intent = new Intent(LinesActivity.this, MapsActivity.class);
+                intent.putParcelableArrayListExtra("shape", (ArrayList<? extends Parcelable>) shapeList); // Passa a lista como ParcelableArrayListExtra
+                startActivity(intent);
             }
 
             @Override

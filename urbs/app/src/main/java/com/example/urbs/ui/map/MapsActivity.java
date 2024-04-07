@@ -4,14 +4,18 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.MenuItem;
 
-import com.example.urbs.data.model.LineResponse;
+import com.example.urbs.data.model.ShapeResponse;
 import com.example.urbs.location.BootReceiver;
 import com.example.urbs.service.ApiManager;
-import com.example.urbs.utils.AccessTokenManager;
+
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -31,8 +35,13 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 
 import com.example.urbs.R;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private ApiManager apiManager;
@@ -41,17 +50,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PERMISSIONS_REQUEST_LOCATION = 1;
     private FusedLocationProviderClient fusedLocationClient;
 
+    private List<ShapeResponse> shapeList;
+    List<LatLng> routePoints;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        shapeList = getIntent().getParcelableArrayListExtra("shape");
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        BootReceiver bootReceiver = new BootReceiver();
-        IntentFilter filter = new IntentFilter("android.intent.action.BOOT_COMPLETED");
-        registerReceiver(bootReceiver, filter);
+//        BootReceiver bootReceiver = new BootReceiver();
+//        IntentFilter filter = new IntentFilter("android.intent.action.BOOT_COMPLETED");
+//        registerReceiver(bootReceiver, filter);
     }
 
     @Override
@@ -86,6 +99,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else {
             showMyLocalization();
         }
+        // Adicionar marcadores no mapa com base nas coordenadas
+//        addMarkersToMap();
+
+        // Desenhar a rota no mapa
+        drawRoute();
+
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                focusMapRegion();
+            }
+        });
+
     }
 
     @Override
@@ -123,7 +149,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     userLocation = location;
                     // Faça algo com a localização em tempo real
                     LatLng userLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(userLatLng));
+//                    mMap.moveCamera(CameraUpdateFactory.newLatLng(userLatLng));
                 }
             }
         };
@@ -131,4 +157,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
 
     }
+
+//    private void addMarkersToMap() {
+//        if (mMap != null && shapeList != null) {
+//            for (ShapeResponse shapeResponse : shapeList) {
+//                List<Double> coord = shapeResponse.getCoord();
+//                LatLng latLng = new LatLng(coord.get(1), coord.get(0)); // Índice 1 é a latitude e o índice 0 é a longitude
+//                mMap.addMarker(new MarkerOptions().position(latLng));
+//            }
+//        }
+//    }
+
+    private void drawRoute() {
+        if (mMap != null && shapeList != null) {
+            PolylineOptions polylineOptions = new PolylineOptions();
+            routePoints = new ArrayList<>();
+            polylineOptions.color(Color.RED);
+            for (ShapeResponse shapeResponse : shapeList) {
+                List<Double> coord = shapeResponse.getCoord();
+                LatLng latLng = new LatLng(coord.get(1), coord.get(0));
+                polylineOptions.add(latLng);
+                routePoints.add(latLng);
+            }
+            Polyline polyline = mMap.addPolyline(polylineOptions);
+        }
+    }
+
+    private void focusMapRegion() {
+        if (routePoints.isEmpty()) {
+            Log.e("MapsActivity", "Route points list is empty");
+            return;
+        }
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (LatLng point : routePoints) {
+            builder.include(point);
+        }
+
+        LatLngBounds bounds = builder.build();
+        int padding = 100; // padding em pixels
+
+        // Ajusta o foco do mapa para a região especificada
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        mMap.animateCamera(cu);
+    }
+
 }
