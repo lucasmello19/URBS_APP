@@ -68,6 +68,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         shapeList = getIntent().getParcelableArrayListExtra("shape");
         stopList = getIntent().getParcelableArrayListExtra("stops");
@@ -77,6 +78,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
         AppCompatActivity activity = (AppCompatActivity) mapFragment.getActivity();
 
         if (activity != null) {
@@ -115,6 +117,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        LatLng curitibaLatLng = new LatLng(-25.4296, -49.2719); // Coordenadas de Curitiba
+        float zoomLevel = 12.0f; // Nível de zoom adequado para mostrar a cidade
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(curitibaLatLng, zoomLevel));
+
         // Solicitar permissões de localização em tempo de execução
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
