@@ -148,10 +148,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         // Movimenta a câmera para a posição do primeiro veículo, se houver algum
-        if (!vehicleList.isEmpty()) {
-            LatLng firstVehiclePosition = new LatLng(Double.parseDouble(vehicleList.get(0).getLat()), Double.parseDouble(vehicleList.get(0).getLon()));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstVehiclePosition, 12f)); // Zoom para os veículos
-        }
+//        if (!vehicleList.isEmpty()) {
+//            LatLng firstVehiclePosition = new LatLng(Double.parseDouble(vehicleList.get(0).getLat()), Double.parseDouble(vehicleList.get(0).getLon()));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstVehiclePosition, 12f)); // Zoom para os veículos
+//        }
     }
 
 
@@ -220,7 +220,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             public void run() {
                 while (true) {
                     try {
-                        Thread.sleep(30000); // Pausa a execução por 30 segundos
+                        Thread.sleep(15000); // Pausa a execução por 30 segundos
                         updateVehicleMarkers();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
