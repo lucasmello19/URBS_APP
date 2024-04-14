@@ -19,6 +19,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import com.example.urbs.data.model.VehicleResponse;
 import com.example.urbs.utils.AccessTokenManager;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -164,6 +165,32 @@ public class ApiManager {
             }
         });
     }
+
+    public void getVehicles(String cod, final ApiCallback<ArrayList<VehicleResponse>> callback) {
+        Call<ArrayList<VehicleResponse>> call = apiService.getVehicles("vehicles/" + cod);
+        call.enqueue(new Callback<ArrayList<VehicleResponse>>() {
+            @Override
+            public void onResponse(Call<ArrayList<VehicleResponse>> call, Response<ArrayList<VehicleResponse>> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body()); // Passa a lista de linhas para o método onSuccess
+                } else {
+                    String errorMessage = null;
+                    try {
+                        errorMessage = parseErrorMessage(response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    callback.onFailure(new Exception(errorMessage != null ? errorMessage : "Registration failed"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<VehicleResponse>> call, Throwable t) {
+                callback.onFailure(t);
+            }
+        });
+    }
+
 
     // Interface para callback
     public interface ApiCallback<T> {

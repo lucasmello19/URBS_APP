@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.data.model.ShapeResponse;
 import com.example.urbs.data.model.StopResponse;
+import com.example.urbs.data.model.VehicleResponse;
 import com.example.urbs.location.BootReceiver;
 import com.example.urbs.service.ApiManager;
 
@@ -24,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.content.pm.PackageManager;
@@ -31,6 +34,7 @@ import android.content.pm.PackageManager;
 import androidx.core.content.ContextCompat;
 
 import android.location.Location;
+import android.view.View;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -60,7 +64,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private List<ShapeResponse> shapeList;
     private List<StopResponse> stopList;
+    private List<VehicleResponse> vehicleList;
     private LineResponse line;
+
+    private List<Marker> vehicleMarkers = new ArrayList<>();
 
     List<LatLng> routePoints;
 
@@ -68,6 +75,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        apiManager = new ApiManager(MapsActivity.this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         shapeList = getIntent().getParcelableArrayListExtra("shape");
@@ -85,11 +94,67 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             activity.setTitle("Linha - " + line.getNOME());
         }
 
-
 //        BootReceiver bootReceiver = new BootReceiver();
 //        IntentFilter filter = new IntentFilter("android.intent.action.BOOT_COMPLETED");
 //        registerReceiver(bootReceiver, filter);
     }
+
+    private void updateVehicleMarkers() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                apiManager.getVehicles(line.getCOD(),new ApiManager.ApiCallback<ArrayList<VehicleResponse>>()
+                {
+                    @Override
+                    public void onSuccess (ArrayList < VehicleResponse > result) {
+                        // Tratar sucesso da chamada
+                        vehicleList = result;
+
+                        final CameraPosition cameraPosition = mMap.getCameraPosition();
+                        addVehicleMarkers();
+                        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                    }
+                    @Override
+                    public void onFailure (Throwable throwable){
+                        // Tratar falha na chamada
+                        Log.e("MapsActivity", "Falha ao obter vehicles: " + throwable.getMessage());
+                    }
+                });
+            }
+        });
+    }
+
+
+    private void clearVehicleMarkers() {
+        for (Marker marker : vehicleMarkers) {
+            marker.remove();
+        }
+        vehicleMarkers.clear();
+    }
+
+    private void addVehicleMarkers() {
+        clearVehicleMarkers();
+        for (VehicleResponse vehicle : vehicleList) {
+            LatLng position = new LatLng(Double.parseDouble(vehicle.getLat()), Double.parseDouble(vehicle.getLon()));
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(position)
+                    .title(vehicle.getCod())
+                    .snippet(vehicle.getSentido())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)); // Cor do marcador
+
+            Marker marker = mMap.addMarker(markerOptions);
+            vehicleMarkers.add(marker);
+        }
+
+        // Movimenta a câmera para a posição do primeiro veículo, se houver algum
+        if (!vehicleList.isEmpty()) {
+            LatLng firstVehiclePosition = new LatLng(Double.parseDouble(vehicleList.get(0).getLat()), Double.parseDouble(vehicleList.get(0).getLon()));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstVehiclePosition, 12f)); // Zoom para os veículos
+        }
+    }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -146,6 +211,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             }
         });
+
+        updateVehicleMarkers();
+
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(30000); // Pausa a execução por 30 segundos
+                        updateVehicleMarkers();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        // Lida com a exceção de interrupção
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override

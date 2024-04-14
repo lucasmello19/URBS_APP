@@ -4,6 +4,7 @@ import com.example.urbs.data.model.LoginResponse;
 import com.example.urbs.data.model.ShapeResponse;
 import com.example.urbs.data.model.StopResponse;
 import com.example.urbs.data.model.User;
+import com.example.urbs.data.model.VehicleResponse;
 
 import java.util.ArrayList;
 
@@ -25,4 +26,6 @@ public interface ApiService {
     Call<ArrayList<ShapeResponse>> getShape(@Path("path") String path);
     @GET("{path}")
     Call<ArrayList<StopResponse>> getStops(@Path("path") String path);
+    @GET("{path}")
+    Call<ArrayList<VehicleResponse>> getVehicles(@Path("path") String path);
 }
