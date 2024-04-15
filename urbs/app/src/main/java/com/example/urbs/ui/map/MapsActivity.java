@@ -5,6 +5,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -109,11 +112,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void onSuccess (ArrayList < VehicleResponse > result) {
                         // Tratar sucesso da chamada
                         vehicleList = result;
-
-                        final CameraPosition cameraPosition = mMap.getCameraPosition();
                         addVehicleMarkers();
-                        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
                     }
                     @Override
                     public void onFailure (Throwable throwable){
@@ -317,14 +316,25 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 double longitude = (double) coord.get(0);
                 LatLng latLng = new LatLng(latitude, longitude);
 
-                // Adicione um marcador personalizado com nome e sentido como snippet
+                // Carrega o ícone personalizado do recurso drawable e redimensiona
+                BitmapDescriptor icon = getResizedBitmapDescriptor(R.drawable.stop, 150, 150);
+
+                // Adiciona um marcador personalizado com nome e sentido como snippet
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(latLng)
                         .title(stop.getNome()) // Define o nome da parada como título do marcador
-                        .snippet("Sentido: " + stop.getSentido()); // Define o sentido da parada como snippet do marcador
+                        .snippet("Sentido: " + stop.getSentido()) // Define o sentido da parada como snippet do marcador
+                        .icon(icon); // Define o ícone do marcador
 
                 mMap.addMarker(markerOptions);
             }
         }
+    }
+
+    // Método para redimensionar um BitmapDescriptor
+    private BitmapDescriptor getResizedBitmapDescriptor(int resourceId, int width, int height) {
+        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(), resourceId);
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
+        return BitmapDescriptorFactory.fromBitmap(resizedBitmap);
     }
 }
