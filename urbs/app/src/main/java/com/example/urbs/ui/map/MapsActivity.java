@@ -136,11 +136,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         clearVehicleMarkers();
         for (VehicleResponse vehicle : vehicleList) {
             LatLng position = new LatLng(Double.parseDouble(vehicle.getLat()), Double.parseDouble(vehicle.getLon()));
+            BitmapDescriptor icon = getResizedBitmapDescriptor(R.drawable.bus, 150, 150);
+
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(position)
                     .title(vehicle.getCod())
                     .snippet(vehicle.getSentido())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)); // Cor do marcador
+                    .icon(icon); // Cor do marcador
 
             Marker marker = mMap.addMarker(markerOptions);
             vehicleMarkers.add(marker);
