@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -38,6 +39,7 @@ import androidx.core.content.ContextCompat;
 
 import android.location.Location;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -145,7 +147,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LatLng position = new LatLng(Double.parseDouble(vehicle.getLat()), Double.parseDouble(vehicle.getLon()));
             BitmapDescriptor icon = getResizedBitmapDescriptor(R.drawable.bus, 150, 150);
 
-            String snippet = "\nTipo: " + vehicle.getTipoVeiculo() +
+            String snippet = "Tipo: " + vehicle.getTipoVeiculo() +
                     "\nAdaptado: " + vehicle.getAdapt() +
                     "\nSituação: " + vehicle.getSituacao() +
                     "\nUltima atualização: " + vehicle.getRefresh(); // Adiciona o tipo de veículo ao snippet
@@ -241,7 +243,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return view;
             }
         });
-
 
         updateVehicleMarkers();
 
@@ -347,18 +348,52 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 double latitude = (double) coord.get(1);
                 double longitude = (double) coord.get(0);
                 LatLng latLng = new LatLng(latitude, longitude);
+                String list1 = "";
+                String list2 = "";
+                String list3 = "";
+                String list4 = "";
+                List<StopResponse.TableEntry> list = stop.getTableEntries();
+                for (StopResponse.TableEntry hour : list) {
+                    switch (hour.getDia()) {
+                        case "1" :
+                            if (list1.isEmpty()) {
+                                list1 = "\n\nDias Úteis\n\n";
+                            }
+                            list1 = list1 + hour.getHora() + " ";
+                        case "2" :
+                            if (list2.isEmpty()) {
+                                list2 = "\n\nSabádo\n\n";
+                            }
+                            list2 = list2 + hour.getHora() + " ";
+                        case "3" :
+                            if (list3.isEmpty()) {
+                                list3 = "\n\nDomingo\n\n";
+                            }
+                            list3 = list3 + hour.getHora() + " ";
+                        case "4" :
+                            if (list4.isEmpty()) {
+                                list4 = "\n\nFeriado\n\n";
+                            }
+                            list4 = list4 + hour.getHora() + " ";
+                    }
+                }
+                String hoursList = list1 + list2 + list3 + list4;
+
 
                 // Carrega o ícone personalizado do recurso drawable e redimensiona
                 BitmapDescriptor icon = getResizedBitmapDescriptor(R.drawable.stop, 150, 150);
 
+                String snippet = "Sentido: " + stop.getSentido() + hoursList;
                 // Adiciona um marcador personalizado com nome e sentido como snippet
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(latLng)
                         .title(stop.getNome()) // Define o nome da parada como título do marcador
-                        .snippet("Sentido: " + stop.getSentido()) // Define o sentido da parada como snippet do marcador
+                        .snippet(snippet) // Define o sentido da parada como snippet do marcador
                         .icon(icon); // Define o ícone do marcador
 
-                mMap.addMarker(markerOptions);
+                if (list.size() > 0) {
+                    mMap.addMarker(markerOptions);
+                }
             }
         }
     }

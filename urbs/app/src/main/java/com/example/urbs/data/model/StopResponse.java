@@ -33,6 +33,9 @@ public class StopResponse implements Parcelable {
     @SerializedName("COORD")
     private List<Object> coord;
 
+    @SerializedName("table")
+    private List<TableEntry> tableEntries; // Lista para os dados da tabela
+
     public String getNome() {
         return nome;
     }
@@ -65,6 +68,10 @@ public class StopResponse implements Parcelable {
         return coord;
     }
 
+    public List<TableEntry> getTableEntries() {
+        return tableEntries;
+    }
+
     // Constructor
     public StopResponse() {
         // Default constructor
@@ -84,6 +91,7 @@ public class StopResponse implements Parcelable {
         for (double value : coordArray) {
             coord.add(value);
         }
+        tableEntries = in.createTypedArrayList(TableEntry.CREATOR); // Ler a lista de parcelables
     }
 
     public static final Creator<StopResponse> CREATOR = new Creator<StopResponse>() {
@@ -118,5 +126,111 @@ public class StopResponse implements Parcelable {
             coordArray[i] = (double) coord.get(i);
         }
         dest.writeDoubleArray(coordArray);
+        dest.writeTypedList(tableEntries); // Escrever a lista de parcelables
+    }
+
+    // Classe para representar os dados da tabela
+    public static class TableEntry implements Parcelable {
+        @SerializedName("HORA")
+        private String hora;
+
+        @SerializedName("PONTO")
+        private String ponto;
+
+        @SerializedName("DIA")
+        private String dia;
+
+        @SerializedName("TABELA")
+        private String tabela;
+
+        @SerializedName("ADAPT")
+        private String adapt;
+
+        @SerializedName("COD")
+        private String cod;
+
+        public String getHora() {
+            return hora;
+        }
+
+        public void setHora(String hora) {
+            this.hora = hora;
+        }
+
+        public String getPonto() {
+            return ponto;
+        }
+
+        public void setPonto(String ponto) {
+            this.ponto = ponto;
+        }
+
+        public String getDia() {
+            return dia;
+        }
+
+        public void setDia(String dia) {
+            this.dia = dia;
+        }
+
+        public String getTabela() {
+            return tabela;
+        }
+
+        public void setTabela(String tabela) {
+            this.tabela = tabela;
+        }
+
+        public String getAdapt() {
+            return adapt;
+        }
+
+        public void setAdapt(String adapt) {
+            this.adapt = adapt;
+        }
+
+        public String getCod() {
+            return cod;
+        }
+
+        public void setCod(String cod) {
+            this.cod = cod;
+        }
+
+        protected TableEntry(Parcel in) {
+            hora = in.readString();
+            ponto = in.readString();
+            dia = in.readString();
+            tabela = in.readString();
+            adapt = in.readString();
+            cod = in.readString();
+        }
+
+        public static final Creator<TableEntry> CREATOR = new Creator<TableEntry>() {
+            @Override
+            public TableEntry createFromParcel(Parcel in) {
+                return new TableEntry(in);
+            }
+
+            @Override
+            public TableEntry[] newArray(int size) {
+                return new TableEntry[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(hora);
+            dest.writeString(ponto);
+            dest.writeString(dia);
+            dest.writeString(tabela);
+            dest.writeString(adapt);
+            dest.writeString(cod);
+        }
     }
 }
