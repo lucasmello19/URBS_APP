@@ -38,6 +38,7 @@ import androidx.core.content.ContextCompat;
 
 import android.location.Location;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -74,6 +75,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     List<LatLng> routePoints;
 
+    private volatile boolean isThreadRunning = true; // Flag para indicar se a Thread deve continuar executando
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,9 +100,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             activity.setTitle("Linha - " + line.getNOME());
         }
 
+
+
 //        BootReceiver bootReceiver = new BootReceiver();
 //        IntentFilter filter = new IntentFilter("android.intent.action.BOOT_COMPLETED");
 //        registerReceiver(bootReceiver, filter);
+
+
     }
 
     private void updateVehicleMarkers() {
@@ -138,21 +145,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LatLng position = new LatLng(Double.parseDouble(vehicle.getLat()), Double.parseDouble(vehicle.getLon()));
             BitmapDescriptor icon = getResizedBitmapDescriptor(R.drawable.bus, 150, 150);
 
+            String snippet = "\nTipo: " + vehicle.getTipoVeiculo() +
+                    "\nAdaptado: " + vehicle.getAdapt() +
+                    "\nSituação: " + vehicle.getSituacao() +
+                    "\nUltima atualização: " + vehicle.getRefresh(); // Adiciona o tipo de veículo ao snippet
+
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(position)
-                    .title(vehicle.getCod())
-                    .snippet(vehicle.getSentido())
-                    .icon(icon); // Cor do marcador
+                    .title(vehicle.getSentido())
+                    .snippet(snippet)
+                    .icon(icon);
 
             Marker marker = mMap.addMarker(markerOptions);
             vehicleMarkers.add(marker);
         }
-
-        // Movimenta a câmera para a posição do primeiro veículo, se houver algum
-//        if (!vehicleList.isEmpty()) {
-//            LatLng firstVehiclePosition = new LatLng(Double.parseDouble(vehicleList.get(0).getLat()), Double.parseDouble(vehicleList.get(0).getLon()));
-//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstVehiclePosition, 12f)); // Zoom para os veículos
-//        }
     }
 
 
@@ -213,13 +219,37 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null; // Use o padrão
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                // Infla o layout personalizado do InfoWindow
+                View view = getLayoutInflater().inflate(R.layout.custom_info_window, null);
+
+                // Encontre os elementos de visualização no layout
+                TextView titleTextView = view.findViewById(R.id.titleTextView);
+                TextView snippetTextView = view.findViewById(R.id.snippetTextView);
+
+                // Defina o texto do título e do snippet
+                titleTextView.setText(marker.getTitle());
+                snippetTextView.setText(marker.getSnippet());
+
+                return view;
+            }
+        });
+
+
         updateVehicleMarkers();
 
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                while (true) {
+                while (isThreadRunning) {
                     try {
                         Thread.sleep(15000); // Pausa a execução por 30 segundos
                         updateVehicleMarkers();
@@ -339,4 +369,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
         return BitmapDescriptorFactory.fromBitmap(resizedBitmap);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isThreadRunning = false; // Define a flag para indicar que a Thread deve parar
+    }
+
 }

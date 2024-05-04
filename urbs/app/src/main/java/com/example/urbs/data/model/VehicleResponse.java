@@ -84,7 +84,11 @@ public class VehicleResponse {
     }
 
     public String getAdapt() {
-        return adapt;
+        if (adapt.contains("1")) {
+            return "Sim";
+        } else {
+            return "Não";
+        }
     }
 
     public void setAdapt(String adapt) {
@@ -92,7 +96,7 @@ public class VehicleResponse {
     }
 
     public String getTipoVeiculo() {
-        return tipoVeiculo;
+        return mapTipoVeiculo(tipoVeiculo);
     }
 
     public void setTipoVeiculo(String tipoVeiculo) {
@@ -146,4 +150,36 @@ public class VehicleResponse {
     public void setSentido(String sentido) {
         this.sentido = sentido;
     }
+
+    private String mapTipoVeiculo(String tipoVeiculo) {
+        switch (tipoVeiculo) {
+            case "1":
+                return "COMUM";
+            case "2":
+                return "SEMI PADRON";
+            case "3":
+                return "PADRON";
+            case "4":
+                return "ARTICULADO";
+            case "5":
+                return "BIARTICULADO";
+            case "6":
+                return "MICRO";
+            case "7":
+                return "MICRO ESPECIAL";
+            case "8":
+                return "BIARTIC. BIO";
+            case "9":
+                return "ARTIC. BIO";
+            case "10":
+                return "HIBRIDO";
+            case "11":
+                return "HIBRIDO BIO";
+            case "12":
+                return "ELÉTRICO";
+            default:
+                return null;
+        }
+    }
+
 }
