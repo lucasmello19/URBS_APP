@@ -3,6 +3,7 @@ package com.example.urbs.ui.map;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,6 +25,7 @@ import com.example.urbs.data.model.VehicleResponse;
 import com.example.urbs.location.BootReceiver;
 import com.example.urbs.service.ApiManager;
 
+import com.example.urbs.ui.Line.LinesActivity;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -87,8 +90,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         apiManager = new ApiManager(MapsActivity.this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        shapeList = getIntent().getParcelableArrayListExtra("shape");
-        stopList = getIntent().getParcelableArrayListExtra("stops");
         line = getIntent().getParcelableExtra("line");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -110,6 +111,42 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     }
+
+    public void getShape(final LineResponse line) {
+        apiManager.getShape(line.getCOD(), new ApiManager.ApiCallback<ArrayList<ShapeResponse>>() {
+            @Override
+            public void onSuccess(ArrayList<ShapeResponse> result) {
+                // Tratar sucesso da chamada
+                shapeList = result;
+                drawRoute();
+                getStops(line);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                // Tratar falha na chamada
+                Log.e("LinesActivity", "Falha ao obter linhas: " + throwable.getMessage());
+            }
+        });
+    }
+
+    public void getStops(final LineResponse line) {
+        apiManager.getStops(line.getCOD(), new ApiManager.ApiCallback<ArrayList<StopResponse>>() {
+            @Override
+            public void onSuccess(ArrayList<StopResponse> result) {
+                // Tratar sucesso da chamada
+                stopList = result;
+                addMarkersToMap();
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                // Tratar falha na chamada
+                Log.e("LinesActivity", "Falha ao obter linhas: " + throwable.getMessage());
+            }
+        });
+    }
+
 
     private void updateVehicleMarkers() {
         runOnUiThread(new Runnable() {
@@ -202,13 +239,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             showMyLocalization();
         }
-        drawRoute();
-        addMarkersToMap();
 
         mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
             @Override
             public void onMapLoaded() {
-                focusMapRegion();
+                getShape(line);
             }
         });
 
@@ -245,6 +280,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         updateVehicleMarkers();
+        getShape(line);
 
         new Thread(new Runnable() {
 
@@ -319,6 +355,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 routePoints.add(latLng);
             }
             Polyline polyline = mMap.addPolyline(polylineOptions);
+            focusMapRegion();
         }
     }
 
