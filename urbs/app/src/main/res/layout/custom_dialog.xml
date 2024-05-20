@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- custom_info_window.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/titleTextView"
+        android:id="@+id/dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
         android:textStyle="bold"
-        android:layout_gravity="center_horizontal"
-        android:paddingBottom="8dp"/>
+        android:text="Title" />
 
     <TextView
-        android:id="@+id/snippetTextView"
+        android:id="@+id/dialog_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:layout_gravity="center_horizontal"/>
+        android:paddingTop="8dp"
+        android:text="Description" />
 
     <Button
-        android:id="@+id/info_button"
+        android:id="@+id/dialog_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ver Horários" />
+        android:text="Ver horários" />
 </LinearLayout>

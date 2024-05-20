@@ -3,6 +3,7 @@ package com.example.urbs.ui.map;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ import com.example.urbs.location.BootReceiver;
 import com.example.urbs.service.ApiManager;
 
 import com.example.urbs.ui.Line.LinesActivity;
+import com.example.urbs.ui.hours.HoursActivity;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,6 +44,7 @@ import androidx.core.content.ContextCompat;
 
 import android.location.Location;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -184,15 +187,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             LatLng position = new LatLng(Double.parseDouble(vehicle.getLat()), Double.parseDouble(vehicle.getLon()));
             BitmapDescriptor icon = getResizedBitmapDescriptor(R.drawable.bus, 150, 150);
 
-            String snippet = "Tipo: " + vehicle.getTipoVeiculo() +
+            String title = vehicle.getSentido() +
+                    "\nTipo: " + vehicle.getTipoVeiculo() +
                     "\nAdaptado: " + vehicle.getAdapt() +
                     "\nSituação: " + vehicle.getSituacao() +
                     "\nUltima atualização: " + vehicle.getRefresh(); // Adiciona o tipo de veículo ao snippet
 
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(position)
-                    .title(vehicle.getSentido())
-                    .snippet(snippet)
+                    .title(title)
+                    .snippet("")
                     .icon(icon);
 
             Marker marker = mMap.addMarker(markerOptions);
@@ -249,34 +253,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public boolean onMarkerClick(Marker marker) {
-                // Mostrar info window ao clicar no marcador
-                marker.showInfoWindow();
-                return true;
+//            public boolean onMarkerClick(Marker marker) {
+//                // Mostrar info window ao clicar no marcador
+//                marker.showInfoWindow();
+//                return true;
+//            }
+            public boolean onMarkerClick(final Marker marker) {
+                Dialog dialog = new Dialog(MapsActivity.this);
+                dialog.setContentView(R.layout.custom_dialog);
+
+                TextView title = dialog.findViewById(R.id.dialog_title);
+                TextView description = dialog.findViewById(R.id.dialog_description);
+                Button button = dialog.findViewById(R.id.dialog_button);
+
+                title.setText(marker.getTitle());
+                description.setText("");
+                String snippet = marker.getSnippet();
+                if (snippet.isEmpty()) {
+                    button.setVisibility(View.GONE);
+                } else {
+                    button.setVisibility(View.VISIBLE);
+                }
+
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MapsActivity.this, HoursActivity.class);
+                        intent.putExtra("marker_snippet", marker.getSnippet());
+                        startActivity(intent);
+                    }
+                });
+
+                dialog.show();
+                return true; // Indicate we have handled the click
             }
-        });
 
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Override
-            public View getInfoWindow(Marker marker) {
-                return null; // Use o padrão
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-                // Infla o layout personalizado do InfoWindow
-                View view = getLayoutInflater().inflate(R.layout.custom_info_window, null);
-
-                // Encontre os elementos de visualização no layout
-                TextView titleTextView = view.findViewById(R.id.titleTextView);
-                TextView snippetTextView = view.findViewById(R.id.snippetTextView);
-
-                // Defina o texto do título e do snippet
-                titleTextView.setText(marker.getTitle());
-                snippetTextView.setText(marker.getSnippet());
-
-                return view;
-            }
         });
 
         updateVehicleMarkers();
@@ -409,7 +420,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             list3 = list3 + hour.getHora() + " ";
                         case "4" :
                             if (list4.isEmpty()) {
-                                list4 = "\n\nFeriado\n\n";
+                                list4 = "\n\nFeriados\n\n";
                             }
                             list4 = list4 + hour.getHora() + " ";
                     }
@@ -420,12 +431,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Carrega o ícone personalizado do recurso drawable e redimensiona
                 BitmapDescriptor icon = getResizedBitmapDescriptor(R.drawable.stop, 150, 150);
 
-                String snippet = "Sentido: " + stop.getSentido() + hoursList;
+                String title = stop.getNome() + "\n\nSentido: " + stop.getSentido();
                 // Adiciona um marcador personalizado com nome e sentido como snippet
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(latLng)
-                        .title(stop.getNome()) // Define o nome da parada como título do marcador
-                        .snippet(snippet) // Define o sentido da parada como snippet do marcador
+                        .title(title) // Define o nome da parada como título do marcador
+                        .snippet(hoursList) // Define o sentido da parada como snippet do marcador
                         .icon(icon); // Define o ícone do marcador
 
                 if (list.size() > 0) {

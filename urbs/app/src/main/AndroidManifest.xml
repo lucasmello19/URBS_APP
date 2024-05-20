@@ -20,7 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.Line.LinesActivity"></activity>
+        <activity android:name=".ui.hours.HoursActivity"></activity>
+        <activity android:name=".ui.Line.LinesActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -42,7 +43,7 @@
         <service
             android:name=".location.LocationUpdateService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity
             android:name=".ui.map.MapsActivity"
