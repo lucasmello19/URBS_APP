@@ -263,11 +263,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 dialog.setContentView(R.layout.custom_dialog);
 
                 TextView title = dialog.findViewById(R.id.dialog_title);
-                TextView description = dialog.findViewById(R.id.dialog_description);
                 Button button = dialog.findViewById(R.id.dialog_button);
 
                 title.setText(marker.getTitle());
-                description.setText("");
                 String snippet = marker.getSnippet();
                 if (snippet.isEmpty()) {
                     button.setVisibility(View.GONE);
@@ -431,7 +429,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 // Carrega o ícone personalizado do recurso drawable e redimensiona
                 BitmapDescriptor icon = getResizedBitmapDescriptor(R.drawable.stop, 150, 150);
 
-                String title = stop.getNome() + "\n\nSentido: " + stop.getSentido();
+                String title = stop.getNome() + "\n\nSentido: " + stop.getSentido() + "\n";
                 // Adiciona um marcador personalizado com nome e sentido como snippet
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(latLng)
