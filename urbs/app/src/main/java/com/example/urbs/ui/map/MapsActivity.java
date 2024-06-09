@@ -150,7 +150,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-
     private void updateVehicleMarkers() {
         runOnUiThread(new Runnable() {
             @Override
@@ -203,8 +202,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             vehicleMarkers.add(marker);
         }
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

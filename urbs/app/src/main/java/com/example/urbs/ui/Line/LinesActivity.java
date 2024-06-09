@@ -52,8 +52,7 @@ public class LinesActivity extends AppCompatActivity {
                 recyclerView.setLayoutManager(new LinearLayoutManager(LinesActivity.this));
 
                 // Criar e configurar o adapter
-                LineAdapter adapter = new LineAdapter(lineList);
-                recyclerView.setAdapter(adapter);
+                LineAdapter adapter = new LineAdapter(LinesActivity.this, lineList); // Corrigido
 
                 // Definir o ouvinte de clique no adapter
                 adapter.setOnItemClickListener(new LineAdapter.OnItemClickListener() {
@@ -66,6 +65,8 @@ public class LinesActivity extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+
+                recyclerView.setAdapter(adapter);
             }
 
             @Override
