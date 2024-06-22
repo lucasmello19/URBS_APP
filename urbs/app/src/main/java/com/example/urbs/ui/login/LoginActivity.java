@@ -1,9 +1,14 @@
 package com.example.urbs.ui.login;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.util.Patterns;
 import android.view.View;
@@ -24,6 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText usernameEditText;
     private EditText passwordEditText;
     private ProgressBar progressBar;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +48,18 @@ public class LoginActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress);
 
         progressBar.setVisibility(View.GONE);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Solicita a permissão
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        } else {
+            // Permissão já concedida, faça o que for necessário
+            iniciarLocalizacao();
+        }
+
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +118,33 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, LinesActivity.class);
             startActivity(intent);
         }
+
+
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION) {
+            // Se a solicitação de permissão foi cancelada, o array de resultados estará vazio
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permissão concedida, inicia a localização
+                iniciarLocalizacao();
+
+                // Envia um broadcast informando que a permissão foi concedida
+                Intent intent = new Intent("com.example.urbs.PERMISSION_GRANTED");
+                sendBroadcast(intent);
+            } else {
+                // Permissão negada, explique para o usuário ou desative recursos que dependem dessa permissão
+                Toast.makeText(this, "Permissão de localização negada", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void iniciarLocalizacao() {
+        // Inicie a lógica para obter a localização do usuário aqui
+    }
+
 
     public boolean onValidateEmail(View view) {
         String email = usernameEditText.getText().toString().trim();

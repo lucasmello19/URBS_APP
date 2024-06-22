@@ -28,4 +28,6 @@ public interface ApiService {
     Call<ArrayList<StopResponse>> getStops(@Path("path") String path);
     @GET("{path}")
     Call<ArrayList<VehicleResponse>> getVehicles(@Path("path") String path);
+    @POST("{path}")
+    Call<Void> saveLocation(@Path("path") String path, @Body User user);
 }

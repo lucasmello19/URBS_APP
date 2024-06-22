@@ -2,6 +2,7 @@ package com.example.urbs.ui.map;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,6 +24,7 @@ import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.data.model.ShapeResponse;
 import com.example.urbs.data.model.StopResponse;
 import com.example.urbs.data.model.VehicleResponse;
+import com.example.urbs.location.BootReceiver;
 import com.example.urbs.service.ApiManager;
 import com.example.urbs.ui.hours.HoursActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -86,13 +88,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             activity.setTitle("Linha - " + line.getNOME());
         }
 
-
-
 //        BootReceiver bootReceiver = new BootReceiver();
 //        IntentFilter filter = new IntentFilter("android.intent.action.BOOT_COMPLETED");
 //        registerReceiver(bootReceiver, filter);
-
-
     }
 
     public void getShape(final LineResponse line) {
