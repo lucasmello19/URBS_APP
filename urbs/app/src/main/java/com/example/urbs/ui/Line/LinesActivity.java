@@ -39,7 +39,7 @@ public class LinesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lines);
         setTitle("URBS");
-        apiManager = new ApiManager(LinesActivity.this);
+        apiManager = ApiManager.getInstance(this);
         searchEditText = findViewById(R.id.search_edit_text);
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

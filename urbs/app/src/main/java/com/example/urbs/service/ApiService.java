@@ -1,4 +1,5 @@
 package com.example.urbs.service;
+import com.example.urbs.data.model.CoordinatorResponse;
 import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.data.model.LoginResponse;
 import com.example.urbs.data.model.ShapeResponse;
@@ -29,5 +30,5 @@ public interface ApiService {
     @GET("{path}")
     Call<ArrayList<VehicleResponse>> getVehicles(@Path("path") String path);
     @POST("{path}")
-    Call<Void> saveLocation(@Path("path") String path, @Body User user);
+    Call<Void> saveLocation(@Path("path") String path, @Body CoordinatorResponse coordinator);
 }

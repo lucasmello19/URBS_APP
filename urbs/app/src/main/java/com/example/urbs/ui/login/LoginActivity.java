@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
         setTitle("");
 
-        apiManager = new ApiManager(LoginActivity.this);
+        apiManager = ApiManager.getInstance(this);
 
         usernameEditText = findViewById(R.id.name);
         passwordEditText = findViewById(R.id.password);

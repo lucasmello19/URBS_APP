@@ -11,6 +11,8 @@ import android.location.Location;
 import android.util.Log;
 
 import com.example.urbs.R;
+import com.example.urbs.data.model.CoordinatorResponse;
+import com.example.urbs.service.ApiManager;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 
@@ -29,12 +31,16 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import java.util.Arrays;
+
 public class LocationUpdateService extends Service {
 
     private static final int NOTIFICATION_ID = 12345; // ID da notificação em primeiro plano
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+
+    private ApiManager apiManager;
 
     @Nullable
     @Override
@@ -45,6 +51,8 @@ public class LocationUpdateService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("LocationUpdateService", "Service started");
+
+        apiManager = ApiManager.getInstance(this);
 
         // Configura a notificação em primeiro plano
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -67,8 +75,26 @@ public class LocationUpdateService extends Service {
         // Configura o LocationListener para receber atualizações de localização
         locationListener = new LocationListener() {
             @Override
-            public void onLocationChanged(Location location) {
+            public void onLocationChanged(final Location location) {
+
+//                String accessToken = AccessTokenManager.getInstance(context).getAccessToken();
+
                 Log.d("LocationUpdateService", "Nova localização recebida: " + location.getLatitude() + ", " + location.getLongitude());
+
+                CoordinatorResponse coordinator = new CoordinatorResponse(Arrays.asList(-25.441105, -49.276855));
+
+                apiManager.saveLocation(coordinator, new ApiManager.ApiCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void result) {
+                        Log.d("LocationUpdateService", "Nova localização enviada: " + location.getLatitude() + ", " + location.getLongitude());
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Log.d("LocationUpdateService", "Deu Merda ");
+                    }
+                });
+
             }
 
             @Override
@@ -86,8 +112,8 @@ public class LocationUpdateService extends Service {
 
         // Solicita atualizações de localização
         try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 0, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 60000, 0, locationListener);
         } catch (SecurityException e) {
             e.printStackTrace();
         }

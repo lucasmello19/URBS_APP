@@ -62,7 +62,7 @@ public class SignUpActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle("URBS - Cadastro");
 
-        apiManager = new ApiManager(SignUpActivity.this);
+        apiManager = ApiManager.getInstance(this);
 
         nameEditText = findViewById(R.id.name);
         emailEditText = findViewById(R.id.email);

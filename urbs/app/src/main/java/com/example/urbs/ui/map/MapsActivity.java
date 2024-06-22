@@ -72,7 +72,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        apiManager = new ApiManager(MapsActivity.this);
+        apiManager = ApiManager.getInstance(this);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         line = getIntent().getParcelableExtra("line");

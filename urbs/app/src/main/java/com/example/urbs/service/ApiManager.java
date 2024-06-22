@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.shapes.Shape;
 import android.preference.PreferenceManager;
 
+import com.example.urbs.data.model.CoordinatorResponse;
 import com.example.urbs.data.model.LineResponse;
 import com.example.urbs.data.model.LoginResponse;
 import com.example.urbs.data.model.ShapeResponse;
@@ -26,11 +27,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ApiManager {
 
+    private static ApiManager instance;
     private ApiService apiService;
 
-    public ApiManager(Context context) {
+    // Construtor privado para evitar a criação de instâncias fora da classe
+    private ApiManager(Context context) {
         Retrofit retrofit = RetrofitClient.getClient(context);
         apiService = retrofit.create(ApiService.class);
+    }
+
+    // Método público estático para obter a instância única
+    public static synchronized ApiManager getInstance(Context context) {
+        if (instance == null) {
+            instance = new ApiManager(context);
+        } else {
+            Retrofit retrofit = RetrofitClient.getClient(context);
+            instance.apiService = retrofit.create(ApiService.class);
+        }
+        return instance;
     }
 
     public void registerUser(User user, final ApiCallback<Void> callback) {
@@ -191,6 +205,30 @@ public class ApiManager {
         });
     }
 
+    public void saveLocation(CoordinatorResponse coordinator, final ApiCallback<Void> callback) {
+        Call<Void> call = apiService.saveLocation("save_coordinates", coordinator);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(null);
+                } else {
+                    String errorMessage = null;
+                    try {
+                        errorMessage = parseErrorMessage(response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    callback.onFailure(new Exception(errorMessage != null ? errorMessage : "Save location failed"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onFailure(t);
+            }
+        });
+    }
 
     // Interface para callback
     public interface ApiCallback<T> {
