@@ -434,9 +434,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         .snippet(hoursList) // Define o sentido da parada como snippet do marcador
                         .icon(icon); // Define o ícone do marcador
 
-                if (list.size() > 0) {
+//                if (list.size() > 0) {
                     mMap.addMarker(markerOptions);
-                }
+//                }
             }
         }
     }
