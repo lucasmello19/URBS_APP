@@ -68,6 +68,17 @@ public class LinesActivity extends AppCompatActivity {
             public void onSuccess(ArrayList<LineResponse> result) {
                 lineList = result;
                 adapter = new LineAdapter(LinesActivity.this, lineList);
+                adapter.setOnItemClickListener(new LineAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(LineResponse line) {
+                        // Tratar clique no item da lista
+                        Log.d("LinesActivity", "Item selecionado: " + line.getNOME());
+                        Intent intent = new Intent(LinesActivity.this, MapsActivity.class);
+                        intent.putExtra("line", line);
+                        startActivity(intent);
+                    }
+                });
+
                 recyclerView.setAdapter(adapter);
             }
 
