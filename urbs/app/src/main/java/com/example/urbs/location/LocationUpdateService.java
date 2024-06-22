@@ -91,7 +91,7 @@ public class LocationUpdateService extends Service {
 
                     @Override
                     public void onFailure(Throwable t) {
-                        Log.d("LocationUpdateService", "Deu Merda ");
+                        Log.d("LocationUpdateService", "Localização não enviada");
                     }
                 });
 
