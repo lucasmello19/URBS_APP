@@ -7,8 +7,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.urbs.R;
@@ -26,10 +29,9 @@ import java.util.List;
 public class LinesActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
+    private EditText searchEditText;
+    private LineAdapter adapter;
     private List<LineResponse> lineList;
-    private List<ShapeResponse> shapeList;
-    private List<StopResponse> stopsList;
-
     private ApiManager apiManager;
 
     @Override
@@ -38,42 +40,48 @@ public class LinesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_lines);
         setTitle("URBS");
         apiManager = new ApiManager(LinesActivity.this);
+        searchEditText = findViewById(R.id.search_edit_text);
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         getLines();
+        setupSearchListener();
     }
 
-    public void getLines() {
+    private void setupSearchListener() {
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                filterLines(s.toString());
+            }
+        });
+    }
+
+    private void getLines() {
         apiManager.getLine(new ApiManager.ApiCallback<ArrayList<LineResponse>>() {
             @Override
             public void onSuccess(ArrayList<LineResponse> result) {
-                // Tratar sucesso da chamada
                 lineList = result;
-                // Configurar o RecyclerView
-                recyclerView = findViewById(R.id.recyclerView);
-                recyclerView.setLayoutManager(new LinearLayoutManager(LinesActivity.this));
-
-                // Criar e configurar o adapter
-                LineAdapter adapter = new LineAdapter(LinesActivity.this, lineList); // Corrigido
-
-                // Definir o ouvinte de clique no adapter
-                adapter.setOnItemClickListener(new LineAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(LineResponse line) {
-                        // Tratar clique no item da lista
-                        Log.d("LinesActivity", "Item selecionado: " + line.getNOME());
-                        Intent intent = new Intent(LinesActivity.this, MapsActivity.class);
-                        intent.putExtra("line", line);
-                        startActivity(intent);
-                    }
-                });
-
+                adapter = new LineAdapter(LinesActivity.this, lineList);
                 recyclerView.setAdapter(adapter);
             }
 
             @Override
             public void onFailure(Throwable throwable) {
                 // Tratar falha na chamada
-                Log.e("LinesActivity", "Falha ao obter linhas: " + throwable.getMessage());
+                throwable.printStackTrace();
             }
         });
+    }
+
+    private void filterLines(String query) {
+        if (adapter != null) {
+            adapter.filter(query);
+        }
     }
 }
